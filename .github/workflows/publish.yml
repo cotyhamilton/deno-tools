@@ -1,0 +1,22 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: deno
+        uses: denoland/setup-deno@v1
+
+      - name: publish
+        run: deno publish
