@@ -1,0 +1,52 @@
+name: Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Kind of version bump'
+        default: 'minor'
+        type: choice
+        options:
+        - patch
+        - minor
+        - major
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: config
+        run: |
+          git config user.name ${{ github.actor }}
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: bump version
+        run: |
+          echo "NEXT_VERSION=$(deno run --allow-read=deno.json --allow-write=deno.json bump.ts --out newVersion --type --${{github.event.inputs.version}})" >> $GITHUB_ENV
+
+      - name: create branch
+        run: |
+          NEW_BRANCH="release_$NEXT_VERSION"
+          git switch -c $NEW_BRANCH
+          git add .
+          git commit -m "$NEXT_VERSION"
+          git push --no-verify --verbose origin $NEW_BRANCH
+          echo "NEW_BRANCH=$NEW_BRANCH" >> $GITHUB_ENV
+          
+      - name: create pull request
+        run: |
+          gh pr create -B main -H $NEW_BRANCH --title "Version $NEXT_VERSION" --body "Bump version to $NEXT_VERSION"
