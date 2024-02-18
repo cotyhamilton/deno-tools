@@ -52,8 +52,9 @@ export async function bump({
 }
 
 export const _internals = {
-  readFile: async (file: string) => await Deno.readTextFile(file),
-  writeFile: async (file: string, data: string) => {
+  readFile: async (file: string): Promise<string> =>
+    await Deno.readTextFile(file),
+  writeFile: async (file: string, data: string): Promise<void> => {
     await Deno.writeTextFile(file, data);
   },
 };
