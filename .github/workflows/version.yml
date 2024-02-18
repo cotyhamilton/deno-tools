@@ -50,3 +50,5 @@ jobs:
       - name: create pull request
         run: |
           gh pr create -B main -H $NEW_BRANCH --title "Version $NEXT_VERSION" --body "Bump version to $NEXT_VERSION"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
