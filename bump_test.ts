@@ -11,15 +11,15 @@ Deno.test("test version bumping", async () => {
   const writeFileStub = stub(_internals, "writeFile", () => Promise.resolve());
 
   try {
-    assertEquals(await bump({ file: "./fake.json", type: "patch" }), {
+    assertEquals(await bump("./fake.json", { type: "patch" }), {
       oldVersion: "0.2.1",
       newVersion: "0.2.2",
     });
-    assertEquals(await bump({ file: "./fake.json", type: "minor" }), {
+    assertEquals(await bump("./fake.json", { type: "minor" }), {
       oldVersion: "0.2.1",
       newVersion: "0.3.0",
     });
-    assertEquals(await bump({ file: "./fake.json", type: "major" }), {
+    assertEquals(await bump("./fake.json", { type: "major" }), {
       oldVersion: "0.2.1",
       newVersion: "1.0.0",
     });
@@ -41,7 +41,7 @@ Deno.test("test dry run", async () => {
 
   try {
     assertEquals(
-      await bump({ file: "./fake.json", type: "patch", dry: true }),
+      await bump("./fake.json", { type: "patch", dry: true }),
       { oldVersion: "0.2.1", newVersion: "0.2.2" },
     );
   } finally {
@@ -59,9 +59,7 @@ Deno.test("throws when can't parse version", () => {
   );
 
   try {
-    assertRejects(async () =>
-      await bump({ file: "./fake.json", type: "patch" })
-    );
+    assertRejects(async () => await bump("./fake.json", { type: "patch" }));
   } finally {
     readFileStub.restore();
   }

@@ -5,7 +5,7 @@
  *
  * ```shell
  * > # bump patch version in deno.json and print new version to stdout
- * > deno run --allow-read --allow-write https://jsr.io/@cotyhamilton/tools/$VERSION/bump.ts --file deno.json --out newVersion
+ * > deno run --allow-read --allow-write https://jsr.io/@cotyhamilton/deno-tools/$VERSION/bump.ts --file deno.json --out newVersion
  * ```
  *
  * @module
@@ -16,29 +16,31 @@ import { format, increment, parse } from "jsr:@std/semver@0.216";
 
 /**
  * Increments the version property of a json file.
- * @param {Object} options - Options for bumping the version.
- * @param {string} [options.file="./deno.json"] - The file to update.
- * @param {"major" | "minor" | "patch"} [options.type="patch"] - The type of version bump.
- * @param {boolean} [options.dry=false] - If true, performs a dry run without modifying the file.
- * @returns {Promise<{ oldVersion: string, newVersion: string }>} - A promise resolving to an object containing the old and new versions.
+ *
+ * ```ts
+ * import { bump } from "jsr:@cotyhamilton/deno-tools/bump";
+ *
+ * console.log(await bump("./deno.json", {dry: true}));
+ * ```
+ *
+ * @param file The json file to update.
  */
-export async function bump({
-  file = "./deno.json",
-  type = "patch",
-  dry = false,
-}: {
-  file?: string;
-  type?: "major" | "minor" | "patch";
-  dry?: boolean;
-}): Promise<{ oldVersion: string; newVersion: string }> {
+export async function bump(
+  file: string,
+  opts: BumpOptions = {},
+): Promise<
+  { oldVersion: string; newVersion: string }
+> {
   // const text = await import(file, { with: { type: "text" } }); // waiting on import types
   const versionRegex = /("version": ")(.*?)(")/;
   const text = await _internals.readFile(file);
   const version = text.match(versionRegex)?.[2];
   if (version) {
-    const newVersion = format(increment(parse(version), type));
+    const newVersion = format(
+      increment(parse(version), opts.type || "patch"),
+    );
     const res = { oldVersion: version, newVersion };
-    if (dry) {
+    if (opts.dry) {
       return res;
     }
     await _internals.writeFile(
@@ -51,6 +53,21 @@ export async function bump({
   }
 }
 
+/** Interface for bump options. */
+export interface BumpOptions {
+  /** The type of version bump.
+   *
+   * @default {"patch"}
+   */
+  type?: "major" | "minor" | "patch";
+  /** If true, performs a dry run without modifying the file.
+   *
+   * @default {false}
+   */
+  dry?: boolean;
+}
+
+/** Internals, used for mocking in tests. */
 export const _internals = {
   readFile: async (file: string): Promise<string> =>
     await Deno.readTextFile(file),
@@ -60,7 +77,7 @@ export const _internals = {
 };
 
 async function main() {
-  const { type, file, help, dry, out } = parseArgs(Deno.args, {
+  const { type, file = "./deno.json", help, dry, out } = parseArgs(Deno.args, {
     alias: {
       o: "out",
       h: "help",
@@ -75,12 +92,12 @@ async function main() {
   }
 
   if (out) {
-    const res = await bump({ file, type, dry });
+    const res = await bump(file, { type, dry });
     if (out in res) {
       console.log(res[out as keyof typeof res]);
     }
   } else {
-    console.log(JSON.stringify(await bump({ file, type, dry })));
+    console.log(JSON.stringify(await bump(file, { type, dry })));
   }
 }
 
@@ -95,7 +112,7 @@ OPTIONS:
   --dry                 Enable dry run
   -f, --file <FILE>     Path to the JSON file (default is ./deno.json)
   -h, --help            Prints help information
-  -o, --out  <OUT>      The property to print to stdout: oldVersion, newVersion
+  -o, --out  <OUT>      A property to print to stdout: oldVersion, newVersion
   -t, --type <TYPE>     Type of increment: major, minor, patch (default is patch)`);
 }
 
