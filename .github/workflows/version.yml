@@ -36,7 +36,7 @@ jobs:
 
       - name: bump version
         run: |
-          echo "NEXT_VERSION=$(deno run --allow-read=deno.json --allow-write=deno.json bump.ts --out newVersion --type --${{github.event.inputs.version}})" >> $GITHUB_ENV
+          echo "NEXT_VERSION=$(deno run --allow-read=deno.json --allow-write=deno.json bump.ts --out newVersion --type ${{github.event.inputs.version}})" >> $GITHUB_ENV
 
       - name: create branch
         run: |
