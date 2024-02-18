@@ -1,0 +1,10 @@
+{
+  "name": "@cotyhamilton/tools",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./mod.ts",
+    "./bump": "./bump.ts"
+  },
+  "lock": false,
+  "exclude": [".vscode", "coverage", "docs"]
+}
