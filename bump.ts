@@ -5,7 +5,7 @@
  *
  * ```shell
  * > # bump patch version in deno.json and print new version to stdout
- * > deno run --allow-read --allow-write https://jsr.io/@cotyhamilton/deno-tools/$VERSION/bump.ts --file deno.json --out newVersion
+ * > deno run --allow-read --allow-write jsr:@cotyhamilton/deno-tools/bump --file deno.json --out newVersion
  * ```
  *
  * @module

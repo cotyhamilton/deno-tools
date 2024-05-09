@@ -6,5 +6,5 @@
     "./bump": "./bump.ts"
   },
   "lock": false,
-  "exclude": [".github", ".vscode", "coverage", "docs"]
+  "exclude": [".github", ".vscode"]
 }
