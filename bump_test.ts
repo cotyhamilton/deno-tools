@@ -1,5 +1,5 @@
-import { assertEquals, assertRejects } from "jsr:@std/assert@0.216";
-import { assertSpyCalls, stub } from "jsr:@std/testing@0.216/mock";
+import { assertEquals, assertRejects } from "@std/assert";
+import { assertSpyCalls, stub } from "@std/testing/mock";
 import { _internals, bump } from "./bump.ts";
 
 Deno.test("test version bumping", async () => {

@@ -11,8 +11,8 @@
  * @module
  */
 
-import { parseArgs } from "jsr:@std/cli@0.216";
-import { format, increment, parse } from "jsr:@std/semver@0.216";
+import { parseArgs } from "@std/cli";
+import { format, increment, parse } from "@std/semver";
 
 /**
  * Increments the version property of a json file.
