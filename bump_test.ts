@@ -1,5 +1,5 @@
-import { assert, assertEquals, assertRejects } from "@std/assert";
-import { assertSpyCalls, stub } from "@std/testing/mock";
+import { assert, assertEquals, assertRejects } from "jsr:@std/assert";
+import { assertSpyCalls, stub } from "jsr:@std/testing/mock";
 import { _internals, bump } from "./bump.ts";
 import denoConfig from "./deno.json" with { type: "json" };
 
