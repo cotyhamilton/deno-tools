@@ -3,7 +3,7 @@ import { assertSpyCalls, stub } from "@std/testing/mock";
 import { _internals, bump } from "./bump.ts";
 import denoConfig from "./deno.json" with { type: "json" };
 
-Deno.test("test version bumping", async () => {
+Deno.test("version bump", async () => {
   const readFileStub = stub(
     _internals,
     "readFile",
@@ -32,7 +32,7 @@ Deno.test("test version bumping", async () => {
   assertSpyCalls(writeFileStub, 3);
 });
 
-Deno.test("test dry run", async () => {
+Deno.test("dry run", async () => {
   const readFileStub = stub(
     _internals,
     "readFile",
