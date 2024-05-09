@@ -1,6 +1,7 @@
-import { assertEquals, assertRejects } from "@std/assert";
+import { assert, assertEquals, assertRejects } from "@std/assert";
 import { assertSpyCalls, stub } from "@std/testing/mock";
 import { _internals, bump } from "./bump.ts";
+import denoConfig from "./deno.json" with { type: "json" };
 
 Deno.test("test version bumping", async () => {
   const readFileStub = stub(
@@ -63,4 +64,25 @@ Deno.test("throws when can't parse version", () => {
   } finally {
     readFileStub.restore();
   }
+});
+
+Deno.test("standalone script", async () => {
+  const command = new Deno.Command(Deno.execPath(), {
+    args: [
+      "run",
+      "--no-check",
+      "--quiet",
+      "--no-lock",
+      "--config",
+      "deno.json",
+      "--allow-read=deno.json",
+      "./bump.ts",
+      "--out",
+      "oldVersion",
+      "--dry",
+    ],
+  });
+  const { stdout } = await command.output();
+  const output = new TextDecoder().decode(stdout);
+  assert(output.includes(`${denoConfig.version}`));
 });
